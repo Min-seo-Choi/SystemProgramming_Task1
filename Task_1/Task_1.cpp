@@ -6,6 +6,7 @@
 #include <iostream>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 string wstringToString(const wstring& wstr);
 
@@ -31,15 +32,22 @@ int main()
 		string folder_path = wstringToString(buffer);
 		folder_path.insert(0, ".\\");
 
-		// setting.ini에 설정된 폴더에 있는 json 확장자만 파일명을 출력한다.
-		for (const auto& entry : filesystem::directory_iterator(folder_path))
+
+		if (fs::exists(folder_path) && fs::is_directory(folder_path))
 		{
-			if (entry.path().extension() == ".json")
+			// setting.ini에 설정된 폴더에 있는 json 확장자만 파일명을 출력한다.
+			for (const auto& entry : fs::directory_iterator(folder_path))
 			{
-				cout << "File name : " << entry.path().filename() << endl;
+				if (entry.path().extension() == ".json")
+				{
+					cout << "File name : " << entry.path().filename() << endl;
+				}
 			}
 		}
-
+		else
+		{
+			cout << "Folder does not exist" << endl;
+		}
 		// 해당 디렉토리가 없으면 만들건지, 나갈건지(?) 선택
 	}
 	return 0;
