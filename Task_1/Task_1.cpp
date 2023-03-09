@@ -32,7 +32,6 @@ int main()
 		string folder_path = wstringToString(buffer);
 		folder_path.insert(0, ".\\");
 
-
 		if (fs::exists(folder_path) && fs::is_directory(folder_path))
 		{
 			// setting.ini에 설정된 폴더에 있는 json 확장자만 파일명을 출력한다.
@@ -43,12 +42,30 @@ int main()
 					cout << "File name : " << entry.path().filename() << endl;
 				}
 			}
+
+			cout << "읽어올 파일명 : ";
+			string file_name = " ";
+			cin >> file_name;
+
+			// 파일 읽어오기
+			string file_path = folder_path.append("\\").append(file_name.append(".json"));
+
+			ifstream select_file(file_path);
+			if (!select_file.bad())
+			{
+				cout << select_file.rdbuf();
+				select_file.close();
+			}
+			else
+			{
+
+			}
 		}
 		else
 		{
-			cout << "Folder does not exist" << endl;
+			// 해당 디렉토리가 없으면 만들건지, 나갈건지(?) 선택
+			//cout << "Folder does not exist" << endl;
 		}
-		// 해당 디렉토리가 없으면 만들건지, 나갈건지(?) 선택
 	}
 	return 0;
 }
