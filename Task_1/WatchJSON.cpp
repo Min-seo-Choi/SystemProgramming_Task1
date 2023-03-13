@@ -22,10 +22,10 @@ void WatchJSON::Start()
 	settingFile.insert({ "FilePath", ".\\setting.ini" });
 	settingFile.insert({ "Section", "INFO" });
 	settingFile.insert({ "Key", "DiretoryName" });
-	settingFile.insert({ "Content", new char[MAX_PATH] });
 	settingFile.insert({ "Default", "No Data" });
 
-	result = GetPrivateProfileStringA(settingFile["Section"], settingFile["Key"], "", settingFile["Content"], MAX_PATH, settingFile["FilePath"]);
+
+	result = GetPrivateProfileStringA(settingFile["Section"], settingFile["Key"], "", settingContent, MAX_PATH, settingFile["FilePath"]);
 }
 
 void WatchJSON::Loop()
@@ -35,7 +35,7 @@ void WatchJSON::Loop()
 		if (result)
 		{
 			cout << "현재 경로 설정 파일 경로: " << fs::absolute(settingFile["FileName"]) << endl;
-			string folderPath = Combine(".\\", settingFile["Content"]);
+			string folderPath = Combine(".\\", settingContent);
 
 			// 폴더 안에 파일이 존재하는지 존재하지 않는지 판단
 			if (fs::exists(folderPath) && fs::is_directory(folderPath))
