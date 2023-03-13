@@ -18,14 +18,14 @@ WatchJSON::~WatchJSON()
 
 void WatchJSON::Start()
 {
-	settingFile.insert({ CharToString("FileName"), CharToWCHAR("setting.ini") });
-	settingFile.insert({ CharToString("FilePath"), CharToWCHAR(".\\setting.ini") });
-	settingFile.insert({ CharToString("Section"), CharToWCHAR("INFO") });
-	settingFile.insert({ CharToString("Key"), CharToWCHAR("DiretoryName") });
-	settingFile.insert({ CharToString("Content"), new WCHAR[MAX_PATH] });
-	settingFile.insert({ CharToString("Default"), CharToWCHAR("No Data") });
+	settingFile.insert({ "FileName", "setting.ini" });
+	settingFile.insert({ "FilePath", ".\\setting.ini" });
+	settingFile.insert({ "Section", "INFO" });
+	settingFile.insert({ "Key", "DiretoryName" });
+	settingFile.insert({ "Content", new char[MAX_PATH] });
+	settingFile.insert({ "Default", "No Data" });
 
-	result = GetPrivateProfileString(settingFile["Section"], settingFile["Key"], L"", settingFile["Content"], MAX_PATH, settingFile["FilePath"]);
+	result = GetPrivateProfileStringA(settingFile["Section"], settingFile["Key"], "", settingFile["Content"], MAX_PATH, settingFile["FilePath"]);
 }
 
 void WatchJSON::Loop()
@@ -35,8 +35,9 @@ void WatchJSON::Loop()
 		if (result)
 		{
 			cout << "현재 경로 설정 파일 경로: " << fs::absolute(settingFile["FileName"]) << endl;
-			string folderPath = Combine(".\\", WCHARToChar(settingFile["Content"]));
+			string folderPath = Combine(".\\", settingFile["Content"]);
 
+			// 폴더 안에 파일이 존재하는지 존재하지 않는지 판단
 			if (fs::exists(folderPath) && fs::is_directory(folderPath))
 			{
 				int count = 0;
@@ -70,8 +71,6 @@ void WatchJSON::Loop()
 					{
 						cout << "찾는 파일이 없습니다" << endl << endl;
 					}
-
-
 				}
 				else
 				{
@@ -94,34 +93,6 @@ void WatchJSON::Loop()
 	}
 }
 
-string WatchJSON::CharToString(const char* ch)
-{
-	string str = ch;
-
-	return str;
-}
-
-WCHAR* WatchJSON::CharToWCHAR(const char* ch)
-{
-	WCHAR* wchar;
-	int charSize = MultiByteToWideChar(CP_UTF8, 0, ch, -1, NULL, NULL);
-
-	wchar = new WCHAR[charSize];
-	MultiByteToWideChar(CP_UTF8, 0, ch, strlen(ch) + 1, wchar, charSize);
-
-	return wchar;
-}
-
-char* WatchJSON::WCHARToChar(const wchar_t* ch)
-{
-	char* chr;
-	int chrSize = WideCharToMultiByte(CP_UTF8, 0, ch, -1, NULL, 0, NULL, NULL);
-
-	chr = new char[chrSize];
-	WideCharToMultiByte(CP_UTF8, 0, ch, -1, chr, chrSize, 0, 0);
-
-	return chr;
-}
 
 char* WatchJSON::Combine(const char* ch1, const char* ch2)
 {
