@@ -70,6 +70,8 @@ void WatchJSON::Loop()
 					{
 						cout << "찾는 파일이 없습니다" << endl << endl;
 					}
+
+
 				}
 				else
 				{
