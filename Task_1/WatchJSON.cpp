@@ -40,42 +40,9 @@ void WatchJSON::Loop()
 			// 폴더 안에 파일이 존재하는지 존재하지 않는지 판단
 			if (fs::exists(folderPath) && fs::is_directory(folderPath))
 			{
-				int count = 0;
 				// setting.ini에 설정된 폴더에 있는 json 확장자만 파일명을 출력한다.
-				for (const auto& entry : fs::directory_iterator(folderPath))
-				{
-					if (entry.path().extension() == ".json")
-					{
-						cout << count + 1 << "." << entry.path().filename() << endl;
-						directoryFiles.push_back(entry.path().filename().string());
-						count++;
-					}
-				}
-
-				if (!directoryFiles.empty())
-				{
-					cout << "읽어올 파일명 : ";
-					string fileName = "";
-					cin >> fileName;
-
-					// 파일 읽어오기
-					string filePath = folderPath.append("\\").append(fileName.append(".json"));
-
-					ifstream select_file(filePath);
-					if (select_file.is_open())
-					{
-						cout << select_file.rdbuf() << endl << endl;
-						select_file.close();
-					}
-					else
-					{
-						cout << "찾는 파일이 없습니다" << endl << endl;
-					}
-				}
-				else
-				{
-					cout << ".json 확장자 파일이 없습니다." << endl << endl;
-				}
+				LoadJsonFileNames(folderPath);
+				ShowJsonFile(folderPath);
 			}
 			else
 			{
@@ -93,6 +60,56 @@ void WatchJSON::Loop()
 	}
 }
 
+void WatchJSON::LoadJsonFileNames(string folderPath)
+{
+	int count = 0;
+	for (const auto& entry : fs::directory_iterator(folderPath))
+	{
+		if (entry.path().extension() == ".json")
+		{
+			cout << count + 1 << "." << entry.path().filename() << endl;
+			directoryFiles.push_back(entry.path().filename().string());
+			count++;
+		}
+	}
+}
+
+void WatchJSON::ShowJsonFile(string folderPath)
+{
+	if (!directoryFiles.empty())
+	{
+		cout << "읽어올 파일명 : ";
+		string fileName = "";
+		cin >> fileName;
+
+		// 파일 읽어오기
+		string filePath = folderPath.append("\\").append(fileName.append(".json"));
+
+		ifstream select_file(filePath);
+		if (select_file.is_open())
+		{
+			string jsonFile;
+			//select_file.rdbuf();
+
+			cout << jsonFile << endl << endl;
+			select_file.close();
+
+			cout << "파일 수정을 감지 중 입니다..." << endl;
+			while (true)
+			{
+
+			}
+		}
+		else
+		{
+			cout << "찾는 파일이 없습니다" << endl << endl;
+		}
+	}
+	else
+	{
+		cout << ".json 확장자 파일이 없습니다." << endl << endl;
+	}
+}
 
 char* WatchJSON::Combine(const char* ch1, const char* ch2)
 {
