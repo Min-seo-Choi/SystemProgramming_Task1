@@ -1,8 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "WatchJSON.h"
-#include <iostream>
-#include <filesystem>
-#include <fstream>
+
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -110,6 +108,8 @@ void WatchJSON::ShowJsonFile(string folderPath)
 		cout << ".json 확장자 파일이 없습니다." << endl << endl;
 	}
 }
+
+
 
 char* WatchJSON::Combine(const char* ch1, const char* ch2)
 {
