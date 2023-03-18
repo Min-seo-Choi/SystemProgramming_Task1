@@ -86,17 +86,14 @@ void WatchJSON::ShowJsonFile(string folderPath)
 		ifstream select_file(filePath);
 		if (select_file.is_open())
 		{
-			string jsonFile;
-			//select_file.rdbuf();
-
-			cout << jsonFile << endl << endl;
+			char jsonFile;
+			while (select_file.get(jsonFile))
+			{
+				cout << jsonFile << endl << endl; 
+			}
 			select_file.close();
 
-			cout << "파일 수정을 감지 중 입니다..." << endl;
-			while (true)
-			{
-
-			}
+			cout << "파일 수정을 감지 중 입니다..." << endl;	
 		}
 		else
 		{
@@ -118,4 +115,21 @@ char* WatchJSON::Combine(const char* ch1, const char* ch2)
 	strcat(combine, ch2);
 
 	return combine;
+}
+
+
+std::string JsonDocToString(Document& doc, bool isPretty = false)
+{
+	StringBuffer buffer;
+	if (isPretty)
+	{
+		PrettyWriter<StringBuffer> writer(buffer);
+		doc.Accept(writer);
+	}
+	else
+	{
+		Writer<StringBuffer> writer(buffer);
+		doc.Accept(writer);
+	}
+	return buffer.GetString();
 }

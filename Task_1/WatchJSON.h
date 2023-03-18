@@ -14,6 +14,7 @@
 class WatchJSON
 { 
 public:
+
 	WatchJSON();
 	~WatchJSON();
 
