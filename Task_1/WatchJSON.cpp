@@ -6,7 +6,7 @@ using namespace std;
 namespace fs = std::filesystem;
 
 WatchJSON::WatchJSON()
-	:settingFile(), result(false)
+	:settingFile(), result(false), orginJson(), newJson()
 {
 }
 
@@ -32,6 +32,8 @@ void WatchJSON::Loop()
 	{
 		if (result)
 		{
+			orginJson = "";
+
 			cout << "현재 경로 설정 파일 경로: " << fs::absolute(settingFile["FileName"]) << endl;
 			string folderPath = Combine(".\\", settingContent);
 
@@ -40,7 +42,8 @@ void WatchJSON::Loop()
 			{
 				// setting.ini에 설정된 폴더에 있는 json 확장자만 파일명을 출력한다.
 				LoadJsonFileNames(folderPath);
-				ShowJsonFile(folderPath);
+				string filePath = ShowJsonFile(folderPath);
+				ModifyJsonfile(filePath);
 			}
 			else
 			{
@@ -54,6 +57,9 @@ void WatchJSON::Loop()
 			cout << "파일 명 : " << settingFile["FileName"] << endl;
 			cout << "Section : " << settingFile["Section"] << endl;
 			cout << "Key : " << settingFile["Key"] << endl;
+
+			orginJson = "";
+			newJson = "";
 		}
 	}
 }
@@ -72,7 +78,7 @@ void WatchJSON::LoadJsonFileNames(string folderPath)
 	}
 }
 
-void WatchJSON::ShowJsonFile(string folderPath)
+string WatchJSON::ShowJsonFile(string folderPath)
 {
 	if (!directoryFiles.empty())
 	{
@@ -82,27 +88,67 @@ void WatchJSON::ShowJsonFile(string folderPath)
 
 		// 파일 읽어오기
 		string filePath = folderPath.append("\\").append(fileName.append(".json"));
-
 		ifstream select_file(filePath);
+		
+		char charJson;
+
+		// 선택한 파일 한번 출력
 		if (select_file.is_open())
 		{
-			char jsonFile;
-			while (select_file.get(jsonFile))
+			while (select_file.get(charJson))
 			{
-				cout << jsonFile << endl << endl; 
+				orginJson += charJson;
 			}
+			cout << orginJson << endl;
 			select_file.close();
 
-			cout << "파일 수정을 감지 중 입니다..." << endl;	
+			return filePath;
 		}
 		else
 		{
 			cout << "찾는 파일이 없습니다" << endl << endl;
+			return "";
 		}
 	}
 	else
 	{
 		cout << ".json 확장자 파일이 없습니다." << endl << endl;
+		return "";
+	}
+}
+
+void WatchJSON::ModifyJsonfile(string filePath)
+{
+	if (!orginJson.empty() && !filePath.empty())
+	{
+		cout << "파일 수정을 감지 중 입니다..." << endl;
+
+		char charJson;
+
+		while (true)
+		{
+			if (newJson == "" || orginJson == newJson)
+			{
+				newJson = "";
+				ifstream select_file(filePath);
+
+				if (select_file.is_open())
+				{
+					while (select_file.get(charJson))
+					{
+						newJson += charJson;
+					}
+					select_file.close();
+				}
+			}
+			else
+			{
+				cout << "현재 파일 변경이 감지 되었습니다. 스페이스를 누르면 다시 로드합니다." << endl;
+				cin.ignore();
+				getline(cin, newJson, ' ');
+				cout << newJson << "출력";
+			}
+		}
 	}
 }
 
@@ -118,18 +164,18 @@ char* WatchJSON::Combine(const char* ch1, const char* ch2)
 }
 
 
-std::string JsonDocToString(Document& doc, bool isPretty = false)
-{
-	StringBuffer buffer;
-	if (isPretty)
-	{
-		PrettyWriter<StringBuffer> writer(buffer);
-		doc.Accept(writer);
-	}
-	else
-	{
-		Writer<StringBuffer> writer(buffer);
-		doc.Accept(writer);
-	}
-	return buffer.GetString();
-}
+//std::string JsonDocToString(Document& doc, bool isPretty = false)
+//{
+//	StringBuffer buffer;
+//	if (isPretty)
+//	{
+//		PrettyWriter<StringBuffer> writer(buffer);
+//		doc.Accept(writer);
+//	}
+//	else
+//	{
+//		Writer<StringBuffer> writer(buffer);
+//		doc.Accept(writer);
+//	}
+//	return buffer.GetString();
+//}
