@@ -165,6 +165,7 @@ void WatchJSON::ModifyJsonfile(string filePath)
 		cout << "." << endl;
 		Sleep(500);
 		cout << ".";
+		Sleep(500);
 		system("cls");
 	}
 }
