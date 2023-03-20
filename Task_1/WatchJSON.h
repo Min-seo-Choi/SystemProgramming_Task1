@@ -2,12 +2,10 @@
 #include "rapidjson/document.h"
 
 #include <windows.h>
+#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
-#include <iostream>
-#include <filesystem>
-#include <fstream>
 
 //#include ".\\rapidjson\writer.h"
 //#include ".\\rapidjson\stringbuffer.h"*/
@@ -29,7 +27,7 @@ private:
 	std::vector<std::string> directoryFiles;	// 지정된 폴더 안에 있는 .json 파일들
 	bool result;	// 파일이 제대로 불러와 졌는지
 
-	std::string orginJson;
+	std::string originJson;
 	std::string newJson;
 
 	void LoadJsonFileNames(std::string folderPath);		// 폴더에 있는 .json 파일을 불러온다

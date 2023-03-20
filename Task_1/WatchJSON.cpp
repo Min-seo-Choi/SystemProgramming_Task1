@@ -1,12 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "WatchJSON.h"
-
+#include <filesystem>
+#include <fstream>
 
 using namespace std;
 namespace fs = std::filesystem;
 
 WatchJSON::WatchJSON()
-	:settingFile(), result(false), orginJson(), newJson()
+	:settingFile(), result(false), originJson(), newJson()
 {
 }
 
@@ -32,7 +33,7 @@ void WatchJSON::Loop()
 	{
 		if (result)
 		{
-			orginJson = "";
+			originJson = "";
 
 			cout << "현재 경로 설정 파일 경로: " << fs::absolute(settingFile["FileName"]) << endl;
 			string folderPath = Combine(".\\", settingContent);
@@ -58,7 +59,7 @@ void WatchJSON::Loop()
 			cout << "Section : " << settingFile["Section"] << endl;
 			cout << "Key : " << settingFile["Key"] << endl;
 
-			orginJson = "";
+			originJson = "";
 			newJson = "";
 		}
 	}
@@ -97,9 +98,9 @@ string WatchJSON::ShowJsonFile(string folderPath)
 		{
 			while (select_file.get(charJson))
 			{
-				orginJson += charJson;
+				originJson += charJson;
 			}
-			cout << orginJson << endl;
+			cout << originJson << endl;
 			select_file.close();
 
 			return filePath;
@@ -119,7 +120,7 @@ string WatchJSON::ShowJsonFile(string folderPath)
 
 void WatchJSON::ModifyJsonfile(string filePath)
 {
-	if (!orginJson.empty() && !filePath.empty())
+	if (!originJson.empty() && !filePath.empty())
 	{
 		cout << "파일 수정을 감지 중 입니다..." << endl;
 
@@ -127,7 +128,7 @@ void WatchJSON::ModifyJsonfile(string filePath)
 
 		while (true)
 		{
-			if (newJson == "" || orginJson == newJson)
+			if (newJson == "" || originJson == newJson)
 			{
 				newJson = "";
 				ifstream select_file(filePath);
@@ -144,11 +145,27 @@ void WatchJSON::ModifyJsonfile(string filePath)
 			else
 			{
 				cout << "현재 파일 변경이 감지 되었습니다. 스페이스를 누르면 다시 로드합니다." << endl;
-				cin.ignore();
-				getline(cin, newJson, ' ');
-				cout << newJson << "출력";
+				while (true)
+				{
+					if (GetAsyncKeyState(' '))
+					{
+						originJson = newJson;
+						newJson = "";
+						cout << originJson << endl;
+						break;
+					}
+				}
+				cout << endl;
+				break;
 			}
 		}
+		Sleep(500);
+		cout << "." << endl;
+		Sleep(500);
+		cout << "." << endl;
+		Sleep(500);
+		cout << ".";
+		system("cls");
 	}
 }
 
@@ -162,20 +179,3 @@ char* WatchJSON::Combine(const char* ch1, const char* ch2)
 
 	return combine;
 }
-
-
-//std::string JsonDocToString(Document& doc, bool isPretty = false)
-//{
-//	StringBuffer buffer;
-//	if (isPretty)
-//	{
-//		PrettyWriter<StringBuffer> writer(buffer);
-//		doc.Accept(writer);
-//	}
-//	else
-//	{
-//		Writer<StringBuffer> writer(buffer);
-//		doc.Accept(writer);
-//	}
-//	return buffer.GetString();
-//}
